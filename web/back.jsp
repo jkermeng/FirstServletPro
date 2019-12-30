@@ -24,7 +24,7 @@
 </head>
 
 <body>
-<p>&nbsp;密码已找回，请记录：</p>
+<p>&nbsp;密码已找回，请记录：${pwd}</p>
 <p><a href="login.jsp">返回登录页面</a></p>
 </body>
 </html>

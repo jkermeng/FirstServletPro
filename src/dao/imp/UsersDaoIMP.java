@@ -37,6 +37,32 @@ public class UsersDaoIMP {
         }
     }
 
+    public String selectPwdWordByEmailAndUname(String Email, String Uname) {
+        Users users = new Users();
+        try {
+            new MySqlUtil(connect).QueryWithParam("select upassword from users where uemail = ? and uname = ?", new IPreparedStatement() {
+                @Override
+                public void setPreparedStatement(PreparedStatement ps) throws SQLException {
+                    ps.setString(1, Email);
+                    ps.setString(2, Uname);
+                }
+            }, new IResultSet() {
+                @Override
+                public void setIResultSet(ResultSet rs) throws SQLException {
+                    while (rs.next()){
+                        users.setUpassword(rs.getString("upassword"));
+                    }
+
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnection.closePart();
+        }
+        return users.getUpassword();
+    }
+
     public void modifyUserByUnameAndUemail(Users users) {
         try {
             new MySqlUtil(connect).UpdateOrInsert("update users set upassword = ? where uname=? and uemail = ?", new IPreparedStatement() {

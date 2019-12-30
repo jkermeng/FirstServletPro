@@ -19,13 +19,37 @@ public class retrievePassWordServlet extends HttpServlet {
         String parameter = request.getParameter("remail");
         String newpwd = request.getParameter("newpwd");
         String userName = request.getParameter("userName");
-        Responese responese = us.modifyUserByUnameAndUemail(userName, parameter, newpwd);
-        if (responese.getCode() == 1) {
-            response.sendRedirect("/shopping_test/back.jsp");
+        if (parameter != null && newpwd != null && userName != null) {
+            if (newpwd.equals("") && newpwd != null) {
+                Responese responese = us.selectUserByUnameAndUemail(userName, parameter);
+                if (responese.getCode() == 1) {
+                    String obj = (String) responese.getObj();
+                    request.setAttribute("pwd", obj);
+                    request.getRequestDispatcher("/back.jsp").forward(request, response);
+                    response.sendRedirect("/shopping_test/back.jsp");
+                } else {
+                    request.setAttribute("Error", "您有一项输入没有正确！！！");
+                    request.getRequestDispatcher("/Error.jsp").forward(request, response);
+                }
+
+            } else {
+                Responese responese = us.modifyUserByUnameAndUemail(userName, parameter, newpwd);
+                if (responese.getCode() == 1) {
+                    request.setAttribute("pwd", "新密码:" + newpwd);
+                    request.getRequestDispatcher("/back.jsp").forward(request, response);
+                    response.sendRedirect("/shopping_test/back.jsp");
+                } else {
+                    //错误提示
+                    request.setAttribute("Error", "您什么都没有输入！！！");
+                    request.getRequestDispatcher("/Error.jsp").forward(request, response);
+                }
+            }
+
         } else {
-            //错误提示
-            response.sendRedirect("/shopping_test/back.jsp");
+            request.setAttribute("Error", "您什么都没有输入！！！");
+            request.getRequestDispatcher("/Error.jsp").forward(request, response);
         }
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

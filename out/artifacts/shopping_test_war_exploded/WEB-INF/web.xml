@@ -37,5 +37,13 @@
         <url-pattern>/user/goods</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+    <filter>
+        <filter-name>CanntSeeFilter</filter-name>
+        <filter-class>filter.CanntSeeFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CanntSeeFilter</filter-name>
+        <url-pattern>/back.jsp</url-pattern>
+    </filter-mapping>
 
 </web-app>

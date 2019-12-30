@@ -30,7 +30,8 @@
     </div>
     <div id="product" class="main">
         <c:set var="good" value="${sessionScope.good}"></c:set>
-        <h1>商品名称：${good.gname }</h1>
+
+    <h1>商品名称：${good.gname }</h1>
         <div class="infos">
             <div class="thumb">
                 <img style="width: 100px; height: 100px;" src="${good.gp.purl }" alt="暂无产品图片"/>

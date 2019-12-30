@@ -61,6 +61,22 @@ public class UserService {
         }
     }
 
+    public Responese selectUserByUnameAndUemail(String uname, String uemail) {
+        Responese responese = null;
+        if (uname != null && uemail != null) {
+            String s = udimp.selectPwdWordByEmailAndUname(uemail, uname);
+            if (s != null) {
+                responese = new Responese(Enums.SUCCESS);
+                responese.setObj(s);
+            } else {
+                responese = new Responese(Enums.FAIL);
+            }
+        } else {
+            responese = new Responese(Enums.FAIL);
+        }
+        return responese;
+    }
+
     public Responese modifyUserByUnameAndUemail(String uname, String uemail, String newpwd) {
         Responese responese = new Responese(Enums.SUCCESS);
         if (uname != null && uemail != null && newpwd != null) {

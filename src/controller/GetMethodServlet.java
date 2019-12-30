@@ -36,7 +36,7 @@ public class GetMethodServlet {
     private OrderService ods = new OrderService();
     private ShopCartService scs = new ShopCartService();
 
-    private void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void login(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         resp.setContentType("application/json;charset=UTF-8");
 //        resp.setContentType("html/text;chartset=UTF-8");
         req.setCharacterEncoding("UTF-8");
@@ -210,8 +210,6 @@ public class GetMethodServlet {
 
                 session.setAttribute("viewedProduct", viewgoods);
             }
-
-
         }
         //热门商品
         List<HotNews> nlist = new LinkedList<>();
@@ -226,7 +224,7 @@ public class GetMethodServlet {
     }
 
 
-    private void uniqueGoodsView(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void uniqueGoodsView(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String goodid = req.getParameter("goodid");
         Goods goodsDataById = gs.getGoodsDataById(Integer.valueOf(goodid));
         GoodsPicture goodsPicture = gp.selectByGId(Integer.valueOf(goodid));
@@ -242,38 +240,46 @@ public class GetMethodServlet {
         showCart(req, resp);
     }
 
-    private void goodsView(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void goodsView(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String searchName = req.getParameter("searchName");
         String searchId = req.getParameter("searchId");
         if (searchId != null && searchName != null) {
             List<Goods> goods = gs.selectByGoodsName(searchName);
-            if (goods.size() > 1) {
-                for (Goods gs :
-                        goods) {
-                    GoodsPicture goodsPicture = gp.selectByGId(gs.getGid());
-                    gs.setGp(goodsPicture);
+            if (goods.size() != 0) {
+                if (goods.size() > 1) {
+                    for (Goods gs :
+                            goods) {
+                        GoodsPicture goodsPicture = gp.selectByGId(gs.getGid());
+                        gs.setGp(goodsPicture);
+                    }
+                    req.getSession().setAttribute("goods", goods);
+                    resp.sendRedirect("/shopping_test/product-list.jsp");
+                } else {
+                    //只有一个商品时
+                    Goods goods1 = goods.get(0);
+                    GoodsPicture goodsPicture = gp.selectByGId(goods1.getGid());
+                    goods1.setGp(goodsPicture);
+                    req.getSession().setAttribute("good", goods1);
+                    resp.sendRedirect("/shopping_test/product_view.jsp");
                 }
-                req.getSession().setAttribute("goods", goods);
-                resp.sendRedirect("/shopping_test/product-list.jsp");
+                //如果有用户登陆
+                Map<String, String> user = (Map<String, String>) req.getSession().getAttribute("user");
+                if (user != null) {
+                    if (user.get("uid") != null) {
+                        String uid = user.get("uid");
+                        userService.InsertUserKeyWord(searchName, uid);
+                    }
+                }
+
             } else {
-                //只有一个商品时
-                Goods goods1 = goods.get(0);
-                GoodsPicture goodsPicture = gp.selectByGId(goods1.getGid());
-                goods1.setGp(goodsPicture);
-                req.getSession().setAttribute("good", goods1);
-                resp.sendRedirect("/shopping_test/product_view.jsp");
-            }
-            //如果有用户登陆
-            Map<String, String> user = (Map<String, String>) req.getSession().getAttribute("user");
-            if (user != null) {
-                if (user.get("uid") != null) {
-                    String uid = user.get("uid");
-                    userService.InsertUserKeyWord(searchName, uid);
-                }
+                //没有这个商品
+                req.setAttribute("Error", "没有这个商品");
+                req.getRequestDispatcher("/Error.jsp").forward(req, resp);
             }
 
         } else {
-
+            req.setAttribute("Error", "您什么都没有输入！！！");
+            req.getRequestDispatcher("/Error.jsp").forward(req, resp);
         }
 
 
