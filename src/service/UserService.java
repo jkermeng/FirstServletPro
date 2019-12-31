@@ -43,7 +43,7 @@ public class UserService {
 
             } else {
                 //√ª”–»»¥ 
-                udimp.insertUserKeyWord(keyword, Uid);
+                udimp.insertUserKeyWord(keyword+"&", Uid);
             }
 
 

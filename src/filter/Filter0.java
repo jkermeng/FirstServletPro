@@ -30,7 +30,7 @@ public class Filter0 implements Filter {
         if (user == null || user.size() == 0) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null && cookies.length != 0) {
-
+//                request.getSession().setAttribute("add", add);
                 for (Cookie ck :
                         cookies) {
                     if (ck.getName().equals("login")) {
@@ -47,6 +47,7 @@ public class Filter0 implements Filter {
                                 usermap.put("user_name", obj.getUname());
                                 usermap.put("uid", String.valueOf(obj.getUid()));
                                 request.getSession().setAttribute("user", usermap);
+
                                 break;
 //                                chain.doFilter(req, resp);
 //                                destroy();

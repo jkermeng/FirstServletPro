@@ -8,7 +8,7 @@
 <div class="newsList">
     <h2>新闻动态</h2>
     <ul>
-        <c:forEach items="${requestScope.news }" var="n" end="10">
+        <c:forEach items="${sessionScope.news }" var="n" end="10">
             <li><a href="readNews?nid=${n.hnId }">${n.hnTitle }&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;</a></li>
         </c:forEach>

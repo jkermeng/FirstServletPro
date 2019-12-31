@@ -113,7 +113,6 @@
         <%@ include file="hotproduct.jsp" %>
     </div>
 </div>
-
 <div id="foot">Copyright Shinning Company All Rights Reserved.</div>
 </body>
 <script>

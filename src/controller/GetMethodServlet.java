@@ -2,6 +2,7 @@ package controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.xml.internal.ws.api.policy.PolicyResolver;
 import dao.imp.GoodsPictureDaoIMP;
 import entity.HotNews;
 import entity.HotProduce;
@@ -17,6 +18,7 @@ import sun.plugin.javascript.navig.Link;
 import util.DateUtil;
 
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -69,9 +71,33 @@ public class GetMethodServlet {
                             resp.sendRedirect("/shopping_test/retrieve_password.jsp");
                         }
                     } else {
-                        Object o = JSONObject.toJSON(new Responese(Enums.FAIL));
-                        resp.getWriter().write(o.toString());
-                        resp.sendRedirect("/shopping_test/retrieve_password.jsp");
+                        Responese login = userService.Login(userName, passWord);
+                        if (login.getCode() == 1) {
+                            if (remenber != null && remenber.equals("1")) {
+                                Cookie cookie = new Cookie("login", "uname=" + userName + "_upwd=" + passWord);
+                                cookie.setMaxAge(60 * 60 * 24 * 1);
+                                cookie.setPath("/shopping_test");
+                                resp.addCookie(cookie);
+                                Map<String, String> usermap = new HashMap();
+                                Users obj = (Users) login.getObj();
+                                usermap.put("user_name", obj.getUname());
+                                usermap.put("uid", String.valueOf(obj.getUid()));
+                                req.getSession().setAttribute("user", usermap);
+                                resp.sendRedirect("/shopping_test/index.jsp");
+                            } else {
+                                Map<String, String> usermap = new HashMap();
+                                Users obj = (Users) login.getObj();
+                                usermap.put("user_name", obj.getUname());
+                                usermap.put("uid", String.valueOf(obj.getUid()));
+                                req.getSession().setAttribute("user", usermap);
+                                resp.sendRedirect("/shopping_test/index.jsp");
+                            }
+                        }else {
+                            Object o = JSONObject.toJSON(new Responese(Enums.FAIL));
+                            resp.getWriter().write(o.toString());
+                            resp.sendRedirect("/shopping_test/retrieve_password.jsp");
+                        }
+
                     }
                     break;
                 }
@@ -169,7 +195,6 @@ public class GetMethodServlet {
         pageModel.setQname("Qname");//请求的名称
         req.setAttribute("pageModel", pageModel);
         //购物车
-
         Map<String, String> user = (Map<String, String>) req.getSession().getAttribute("user");
         if (user != null) {
             //有用户时
@@ -217,8 +242,9 @@ public class GetMethodServlet {
             HotNews hotNews = new HotNews(i, "Iphone" + i + ":" + i + "100￥");
             nlist.add(hotNews);
         }
-        req.setAttribute("news", nlist);
-        req.setAttribute("hotProducts", hplist);
+
+        req.getSession().setAttribute("news", nlist);
+        req.getSession().setAttribute("hotProducts", hplist);
         //货物数量
         req.getRequestDispatcher("/index.jsp").forward(req, resp);//Cannot forward after response has been committed
     }

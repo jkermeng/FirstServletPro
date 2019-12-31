@@ -5,8 +5,8 @@
 <div class="hot_sale">
     <h2>热卖推荐</h2>
     <ul>
-        <c:if test="${requestScope.hotProducts!=null }">
-            <c:forEach items="${requestScope.hotProducts }" var="p" begin="4" end="8">
+        <c:if test="${sessionScope.hotProducts!=null }">
+            <c:forEach items="${sessionScope.hotProducts }" var="p" begin="4" end="8">
                 <li>
                     <dl>
                         <dt>
